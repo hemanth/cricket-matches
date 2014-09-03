@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-ajax/index.html">
+
+<polymer-element name="cricket-matches" attributes="">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      #core_card {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+        border-bottom-left-radius: 2px;
+        box-shadow: rgba(0, 0, 0, 0.0980392) 0px 2px 4px, rgba(0, 0, 0, 0.0980392) 0px 0px 3px;
+        left: 270px;
+        top: 90px;
+        background-color: rgb(255, 255, 255);
+      }
+    </style>
+      <core-ajax id="ajax" url="http://www.corsproxy.com/cricscore-api.appspot.com/csa" handleAs="text" auto></core-ajax>
+    <core-card id="core_card" vertical layout>{{matches}}</core-card>
+  </template>
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+        ready: function(){
+            setInterval(function(){
+                  this.$.ajax.go();
+            }.bind(this),1000);
+            this.$.ajax.addEventListener("core-response",function(sr){
+             var matches = []
+             JSON.parse(sr.detail.response).forEach(function(match){
+                console.log(match);
+                matches.push(match.t2 + " vs " + match.t1);
+             });
+             this.matches = matches.join('\n');
+          }.bind(this));
+
+        }
+      });
+
+    })();
+  </script>
+</polymer-element>
